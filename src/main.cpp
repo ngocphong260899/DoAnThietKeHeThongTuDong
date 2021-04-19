@@ -2,9 +2,10 @@
 #include "BluetoothSerial.h"
 #include "ArduinoJson.h"
 #include <string.h>
+
 BluetoothSerial bleSerial;
 StaticJsonBuffer<300> doc;
-String json = "{\"name\":\"phong\", \"age\": 15, \"add\": \"this is add\"}";
+//String json = "{\"name\":\"phong\", \"age\": 15, \"add\": \"this is add\"}";
 
 enum
 {
@@ -35,10 +36,12 @@ void parseJson(char *cmd)
 char data[200];
 void setup()
 {
-
   Serial.begin(115200);
   bleSerial.begin("BLE_PHONG");
   Serial.println("The device started, now you can pair it with bluetooth!");
+
+  pinMode(GPIO_NUM_14, OUTPUT);
+  pinMode(GPIO_NUM_27, OUTPUT);
 }
 
 void loop()
@@ -47,11 +50,8 @@ void loop()
   if (bleSerial.available())
   {
     bleSerial.setTimeout(10);
-
     String msg = bleSerial.readString();
-
-    Serial.println(msg.c_str());
-
+    //Serial.println(msg.c_str());
     parseJson((char *)msg.c_str());
   }
 }
@@ -63,21 +63,25 @@ void control_IO(int cmd)
   case CH1_ON:
   {
     Serial.println("relay 1 on");
+    digitalWrite(GPIO_NUM_14, HIGH);
   }
   break;
   case CH1_OFF:
   {
     Serial.println("relay 1 off");
+    digitalWrite(GPIO_NUM_14, LOW);
   }
   break;
   case CH2_ON:
   {
     Serial.println("relay 2 on");
+    digitalWrite(GPIO_NUM_27, HIGH);
   }
   break;
   case CH2_OFF:
   {
     Serial.println("relay 2 off");
+     digitalWrite(GPIO_NUM_27, LOW);
   }
   break;
   }
